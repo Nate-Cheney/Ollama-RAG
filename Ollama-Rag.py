@@ -99,24 +99,15 @@ class RAGInterface:
         # Initialize the RAG application
         self.rag_application = RAGApplication(retriever)
 
-    def ask_question():
-        question = input("Ask a question: ")
-        answer = self.rag_application.run(question)
+    def ask_question(self, continue_asking="y"):
+        while continue_asking.lower() == "y":
+            question = input("Ask a question: ")
+            answer = self.rag_application.run(question)
+            print("Answer:\n", answer)
+
+            continue_asking = input(f"\nWould you like to ask another question? (y/n)")
 
     
 if __name__ == "__main__":
-    
-
-
-
-    
-
-    ask_question = "Y"
-    while ask_question.upper() == "Y":
-        # Usage
-        question = input("Ask a question: ")
-        answer = rag_application.run(question)
-        print("Answer:\n", answer)
-
-        # Continue?
-        ask_question = input(f"\nWould you like to ask another question? (y/n)")
+    rag_interface = RAGInterface()
+    rag_interface.ask_question()
