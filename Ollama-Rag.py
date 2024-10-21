@@ -83,9 +83,10 @@ class RAGInterface:
         import documents
 
         # Gather documents
-        q = "Enter the number that corresponds with type of documents you'd like to process. \
+        q = "\nEnter the number that corresponds with type of documents you'd like to process. \
         \n\t1 - Files from a directory \
-        \n\t2 - Information from a website"
+        \n\t2 - Information from a website\
+        \n"
         to_load = list(input(q))
         for item in to_load:
             if item == "1":
@@ -103,7 +104,7 @@ class RAGInterface:
         while continue_asking.lower() == "y":
             question = input("Ask a question: ")
             answer = self.rag_application.run(question)
-            print("Answer:\n", answer)
+            print("Answer:\n",answer)
 
             continue_asking = input(f"\nWould you like to ask another question? (y/n)")
 

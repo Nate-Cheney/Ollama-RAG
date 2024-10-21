@@ -33,6 +33,3 @@ def load_website(urls=None):
     docs_list = [item for sublist in docs for item in sublist]  # flattens the list of lists (docs) into a single list (docs_list)
 
     return docs_list
-
-
-load_website()
