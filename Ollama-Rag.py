@@ -13,7 +13,13 @@ def create_promt():
         If you don't know the answer, just say that you don't know.
         Use three sentences maximum and keep the answer concise:
         """,
-    
+        "Prompt 2": 
+        """
+        You are an assistant for summarizing tasks.
+        Use the following documents to create a 1-minute summary.
+        You are not allowed to stray from the content in the documents.
+        Keep the answer succinct:
+        """,
         "Custom":
         """
         If you'd like to use a custom prompt press enter.
@@ -29,6 +35,8 @@ def create_promt():
         prompt_template = input("Enter a prompt:\n")
     elif prompt_selection == "1":
         prompt_template = prompt_dict["Prompt 1"]
+    elif prompt_selection == "2":
+        prompt_template = prompt_dict["Prompt 2"]
     else:
         print("You entered an invalid option.\n")
         create_promt()
