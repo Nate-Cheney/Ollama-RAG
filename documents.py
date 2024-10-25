@@ -1,3 +1,19 @@
+def load_file():
+    from os import environ    
+    environ['USER_AGENT'] = 'RAG_TEST_AGENT'
+
+    from langchain_community.document_loaders import TextLoader
+    import easygui
+
+
+    # Load the selected file
+    file_path = fr"{easygui.fileopenbox()}"
+    docs = [TextLoader(file_path).load()]
+    docs_list = [item for sublist in docs for item in sublist]  # flattens the list of lists (docs) into a single list (docs_list)
+
+    return docs_list
+
+
 def load_directory():
     from os import listdir, environ    
     environ['USER_AGENT'] = 'RAG_TEST_AGENT'

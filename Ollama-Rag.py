@@ -1,3 +1,13 @@
+ollama_rag_ascii_art = '''
+   ____  _ _                         _____            _____ 
+  / __ \| | |                       |  __ \     /\   / ____|
+ | |  | | | | __ _ _ __ ___   __ _  | |__) |   /  \ | |  __ 
+ | |  | | | |/ _` | '_ ` _ \ / _` | |  _  /   / /\ \| | |_ |
+ | |__| | | | (_| | | | | | | (_| | | | \ \  / ____ \ |__| |
+  \____/|_|_|\__,_|_| |_| |_|\__,_| |_|  \_\/_/    \_\_____|
+'''
+
+
 def create_promt():
     '''
     The create_prompt() function isn't meant to be called directly.
@@ -6,37 +16,28 @@ def create_promt():
     from langchain.prompts import PromptTemplate
 
     prompt_dict = {  # All predefined prompts
-        "Prompt 1": 
+        "1": 
         """
         You are an assistant for question-answering tasks.
         Use the following documents to answer the question.
         If you don't know the answer, just say that you don't know.
         Use three sentences maximum and keep the answer concise:
         """,
-        "Prompt 2": 
-        """
-        You are an assistant for summarizing tasks.
-        Use the following documents to create a 1-minute summary.
-        You are not allowed to stray from the content in the documents.
-        Keep the answer succinct:
-        """,
         "Custom":
         """
-        If you'd like to use a custom prompt press enter.
+        Press enter.
         """
     }
 
-    print("Prompt Options:\n")
+    print("\nPrompt Options:\n")
     for key in prompt_dict:
         print(f"{key} \n{prompt_dict[key]}")
-    prompt_selection = input(f"\nSelect one of the prompt options above. Enter the number that corresponds with the desired prompt.\nFor example: 1\n")
+    prompt_selection = input(f"\nSelect one of the prompt options above.\n")
 
     if prompt_selection == "":
         prompt_template = input("Enter a prompt:\n")
     elif prompt_selection == "1":
-        prompt_template = prompt_dict["Prompt 1"]
-    elif prompt_selection == "2":
-        prompt_template = prompt_dict["Prompt 2"]
+        prompt_template = prompt_dict["1"]
     else:
         print("You entered an invalid option.\n")
         create_promt()
@@ -87,19 +88,23 @@ class RAGApplication:
 
 class RAGInterface:
     def __init__(self):
+        import time
         import preprocessing
         import documents
 
+
+        print(ollama_rag_ascii_art)
+        time.sleep(0.5)
+
         # Gather documents
-        q = "\nEnter the number that corresponds with type of documents you'd like to process. \
-        \n\t1 - Files from a directory \
-        \n\t2 - Information from a website\
-        \n"
-        to_load = list(input(q))
+        doc_question = "Select source of the documents you'd like to process. \n\t1 - File \n\t2 - Directory \n\t3 - Website \n"
+        to_load = list(input(doc_question))
         for item in to_load:
             if item == "1":
-                docs_list = documents.load_directory()
+                docs_list = documents.load_file()
             elif item == "2":
+                docs_list = documents.load_directory()
+            elif item == "3":
                 docs_list = documents.load_website()
 
         # Chunk and embed documents
@@ -108,13 +113,14 @@ class RAGInterface:
         # Initialize the RAG application
         self.rag_application = RAGApplication(retriever)
 
+
     def ask_question(self, continue_asking="y"):
         while continue_asking.lower() == "y":
-            question = input("Ask a question: ")
+            question = input("\nAsk a question: ")
             answer = self.rag_application.run(question)
-            print("Answer:\n",answer)
+            print("\nAnswer:\n",answer)
 
-            continue_asking = input(f"\nWould you like to ask another question? (y/n)")
+            continue_asking = input(f"\nWould you like to ask another question? (y/n) ")
 
     
 if __name__ == "__main__":
