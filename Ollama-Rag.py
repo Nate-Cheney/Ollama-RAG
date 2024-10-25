@@ -32,7 +32,7 @@ def create_promt():
     print("\nPrompt Options:\n")
     for key in prompt_dict:
         print(f"{key} \n{prompt_dict[key]}")
-    prompt_selection = input(f"\nSelect one of the prompt options above.\n")
+    prompt_selection = input(f"Select one of the prompt options above.\n")
 
     if prompt_selection == "":
         prompt_template = input("Enter a prompt:\n")
