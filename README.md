@@ -35,8 +35,8 @@ Once the ollama-rag.py script has been ran:
     ```
 
 2. Prompt Selection
--   The predefined prompts allow for easy agent-like questioning.
+-   The predefined prompts allow for an easy way to provide context and instructions prior to questioning.
 
 3. Questions
 -   The LLM will use the prompt selected in step 2 as instructions for how to handle the question.
-- After a question has been answered the user will have a chance to ask more.
+-   After a question has been answered the user will have a chance to ask more.
