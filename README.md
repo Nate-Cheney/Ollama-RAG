@@ -11,9 +11,13 @@ This is a personal project which allows me to provide documents to an LLM runnin
   ```
 - Clone the Ollama-RAG repository
 
-# Use
+# Use ollama-rag
 - Start the Llama3.1 model
   ```
   Ollama run Llama3.1
   ```
-- Run `Ollama-Rag.py` from the terminal or an IDE 
+- Run `ollama-rag.py` from the terminal
+  ```
+  Python ./Ollama-RAG.py
+  ```
+
