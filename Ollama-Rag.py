@@ -126,3 +126,4 @@ class RAGInterface:
 if __name__ == "__main__":
     rag_interface = RAGInterface()
     rag_interface.ask_question()
+    

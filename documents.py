@@ -8,6 +8,7 @@ def load_file():
 
     # Load the selected file
     file_path = fr"{easygui.fileopenbox()}"
+    
     docs = [TextLoader(file_path).load()]
     docs_list = [item for sublist in docs for item in sublist]  # flattens the list of lists (docs) into a single list (docs_list)
 
