@@ -6,19 +6,32 @@ This is a personal project which allows me to provide documents to an LLM runnin
 - Install the following Python libraries:
 
   ```
-  pip install langchain langchain_community langchain_huggingface scikit-learn langchain-ollama
+  pip install gradio langchain langchain_community langchain_huggingface langchain-ollama scikit-learn
   ```
 - Clone the Ollama-RAG repository
 
 # Use ollama-rag
+## Gradio
 ### Start
 - Start the Llama3.1 model
   ```
   Ollama run Llama3.1
   ```
-- Run `ollama-rag.py` from the terminal
+- Run `gradio_app.py` from the terminal
   ```
-  Python ./ollama-rag.py
+  Python ./gradio_app.py
+  ```
+- Go to [http://127.0.0.1:7860](http://127.0.0.1:7860) with a web browser
+
+## Terminal
+### Start
+- Start the Llama3.1 model
+  ```
+  Ollama run Llama3.1
+  ```
+- Run `terminal_app.py` from the terminal
+  ```
+  Python ./terminal_app.py
   ```
 
 ### Usage
