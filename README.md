@@ -23,6 +23,13 @@ This is a personal project which allows me to provide documents to an LLM runnin
   ```
 - Go to [http://127.0.0.1:7860](http://127.0.0.1:7860) with a web browser
 
+### Usage
+- Input documents or paste URLs separated by commas into the top input box.
+
+- Allow the provided docs to be processed.
+
+- Ask away.
+
 ## Terminal
 ### Start
 - Start the Llama3.1 model

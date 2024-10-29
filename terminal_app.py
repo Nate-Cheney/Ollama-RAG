@@ -21,7 +21,7 @@ def create_promt():
         You are an assistant for question-answering tasks.
         Use the following documents to answer the question.
         If you don't know the answer, just say that you don't know.
-        Use up to three sentences maximum and keep the answer concise:
+        Use UP TO four sentences maximum and keep the answer concise:
         """,
         "Custom":
         """
@@ -109,7 +109,8 @@ class RAGInterface:
                 docs_list += documents.load_website()
 
         # Chunk and embed documents
-        retriever = preprocessing.embed_doc_splits(docs_list)
+        doc_splits = preprocessing.chunk_documents(docs_list)
+        retriever = preprocessing.embed_doc_splits(doc_splits)
 
         # Initialize the RAG application
         self.rag_application = RAGApplication(retriever)

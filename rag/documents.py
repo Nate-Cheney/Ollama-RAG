@@ -30,7 +30,7 @@ def load_directory(dir_path=None):
     return docs_list
 
 
-def load_website(urls=None):
+def load_websites(urls=None):
     from os import environ
     environ['USER_AGENT'] = 'RAG_TEST_AGENT'
 
