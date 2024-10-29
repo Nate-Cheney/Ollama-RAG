@@ -21,7 +21,7 @@ def create_promt():
         You are an assistant for question-answering tasks.
         Use the following documents to answer the question.
         If you don't know the answer, just say that you don't know.
-        Use three sentences maximum and keep the answer concise:
+        Use up to three sentences maximum and keep the answer concise:
         """,
         "Custom":
         """
@@ -89,8 +89,8 @@ class RAGApplication:
 class RAGInterface:
     def __init__(self):
         import time
-        import preprocessing
-        import documents
+        import rag.preprocessing as preprocessing
+        import rag.documents as documents
 
 
         print(ollama_rag_ascii_art)
@@ -99,13 +99,14 @@ class RAGInterface:
         # Gather documents
         doc_question = "Select source of the documents you'd like to process. \n\t1 - File \n\t2 - Directory \n\t3 - Website \n"
         to_load = list(input(doc_question))
+        docs_list = []
         for item in to_load:
             if item == "1":
-                docs_list = documents.load_file()
+                docs_list += documents.load_file()
             elif item == "2":
-                docs_list = documents.load_directory()
+                docs_list += documents.load_directory()
             elif item == "3":
-                docs_list = documents.load_website()
+                docs_list += documents.load_website()
 
         # Chunk and embed documents
         retriever = preprocessing.embed_doc_splits(docs_list)
@@ -114,16 +115,16 @@ class RAGInterface:
         self.rag_application = RAGApplication(retriever)
 
 
-    def ask_question(self, continue_asking="y"):
+    def generate_response(self, continue_asking="y"):
         while continue_asking.lower() == "y":
             question = input("\nAsk a question: ")
             answer = self.rag_application.run(question)
             print("\nAnswer:\n",answer)
 
-            continue_asking = input(f"\nWould you like to ask another question? (y/n) ")
+            continue_asking = input(f"\n\nWould you like to ask another question? (y/n) ")
 
     
 if __name__ == "__main__":
     rag_interface = RAGInterface()
-    rag_interface.ask_question()
+    rag_interface.generate_response()
     

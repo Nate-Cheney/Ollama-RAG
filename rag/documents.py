@@ -1,13 +1,12 @@
-def load_file():
+def load_file(file_path=None):
     from os import environ    
     environ['USER_AGENT'] = 'RAG_TEST_AGENT'
 
     from langchain_community.document_loaders import TextLoader
     import easygui
 
-
-    # Load the selected file
-    file_path = fr"{easygui.fileopenbox()}"
+    if not file_path:
+        file_path = fr"{easygui.fileopenbox()}"
     
     docs = [TextLoader(file_path).load()]
     docs_list = [item for sublist in docs for item in sublist]  # flattens the list of lists (docs) into a single list (docs_list)
@@ -15,16 +14,15 @@ def load_file():
     return docs_list
 
 
-def load_directory():
+def load_directory(dir_path=None):
     from os import listdir, environ    
     environ['USER_AGENT'] = 'RAG_TEST_AGENT'
 
     from langchain_community.document_loaders import TextLoader
     import easygui
 
-
-    # Load documents from the selected directory
-    dir_path = fr"{easygui.diropenbox()}"
+    if not dir_path:
+        dir_path = fr"{easygui.diropenbox()}"
 
     docs = [TextLoader(dir_path + "\\" + file).load() for file in listdir(dir_path)]
     docs_list = [item for sublist in docs for item in sublist]  # flattens the list of lists (docs) into a single list (docs_list)
