@@ -6,7 +6,7 @@ This is a personal project which allows me to provide documents to an LLM runnin
 - Install the following Python libraries:
 
   ```
-  pip install gradio langchain langchain_community langchain_huggingface langchain-ollama scikit-learn
+  pip install gradio langchain langchain_community langchain_huggingface langchain-ollama scikit-learn tiktoken
   ```
 - Clone the Ollama-RAG repository
 
