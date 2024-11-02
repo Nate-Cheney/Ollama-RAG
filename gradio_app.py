@@ -11,7 +11,9 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import rag.documents as documents
 import rag.preprocessing as preprocessing
+import time
 import torch
+import os
 
 
 def process_documents(message):
@@ -34,7 +36,7 @@ def process_documents(message):
     try:
         retriever = preprocessing.embed_doc_splits(doc_splits)
     except torch.OutOfMemoryError:
-        print("\nGPU out of memory.\n\nRestart the server")
+        print("\nGPU out of memory.\n\nRestart gradio_app.py")
 
 
 def generate_response(message, history):
@@ -100,10 +102,12 @@ with gr.Blocks() as app:
         )
 
     # Chatbot
+    chatbot = gr.Chatbot(height=800, type="messages")  # Increase the height of the chatbot
     chat_interface = gr.ChatInterface(
         generate_response,
+        chatbot=chatbot,
         type="messages",
-        show_progress="full"
+        show_progress="full",
         )
 
 
