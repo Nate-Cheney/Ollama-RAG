@@ -1,27 +1,29 @@
+from os import environ
+environ['USER_AGENT'] = "RAG_APPLICATION"
+environ['CUDA_DEVICE_ORDER'] = "PCI_BUS_ID"
+environ['CUDA_VISIBLE_DEVICES'] = "0"
+
 import gradio as gr
 from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from os import environ
 import rag.documents as documents
 import rag.preprocessing as preprocessing
-import time
+import torch
 
 
 def process_documents(message):
     docs_list = list()
     # If URL(s), process each url and add them to the doc list
     if message["text"]:
-        environ['USER_AGENT'] = 'RAG_TEST_AGENT'
         url_list = message["text"].split(",")
         docs = [WebBaseLoader(url).load() for url in url_list]
         docs_list += [item for sublist in docs for item in sublist]
 
     # If file(s), process each file and add it to the doc list
     if message["files"]:
-        environ['USER_AGENT'] = 'RAG_TEST_AGENT'
         for file in message["files"]:
             docs = [TextLoader(file).load()]
             docs_list += [item for sublist in docs for item in sublist]
@@ -29,7 +31,10 @@ def process_documents(message):
     # Chunk and embed docs_list
     doc_splits = preprocessing.chunk_documents(docs_list)
     global retriever
-    retriever = preprocessing.embed_doc_splits(doc_splits)
+    try:
+        retriever = preprocessing.embed_doc_splits(doc_splits)
+    except torch.OutOfMemoryError:
+        print("Restart the application. GPU out of memory")
 
 
 def generate_response(message, history):
