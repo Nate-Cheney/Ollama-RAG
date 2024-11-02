@@ -7,7 +7,6 @@ def chunk_documents(docs_list: list):
     )
     # Split the documents into chunks
     doc_splits = text_splitter.split_documents(docs_list)
-
     return doc_splits
 
 
