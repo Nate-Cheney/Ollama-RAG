@@ -34,7 +34,7 @@ def process_documents(message):
     try:
         retriever = preprocessing.embed_doc_splits(doc_splits)
     except torch.OutOfMemoryError:
-        print("Restart the application. GPU out of memory")
+        print("\nGPU out of memory.\n\nRestart the server")
 
 
 def generate_response(message, history):
