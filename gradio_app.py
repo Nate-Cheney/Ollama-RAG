@@ -3,6 +3,7 @@ environ['USER_AGENT'] = "RAG_APPLICATION"
 environ['CUDA_DEVICE_ORDER'] = "PCI_BUS_ID"
 environ['CUDA_VISIBLE_DEVICES'] = "0"
 
+
 import gradio as gr
 from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import WebBaseLoader
@@ -11,9 +12,7 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import rag.documents as documents
 import rag.preprocessing as preprocessing
-import time
 import torch
-import os
 
 
 def process_documents(message):
@@ -29,6 +28,7 @@ def process_documents(message):
         for file in message["files"]:
             docs = [TextLoader(file).load()]
             docs_list += [item for sublist in docs for item in sublist]
+    print(f"Documents provided: {docs_list}")
 
     # Chunk and embed docs_list
     doc_splits = preprocessing.chunk_documents(docs_list)
