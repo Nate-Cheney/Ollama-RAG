@@ -12,23 +12,30 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import rag.documents as documents
 import rag.preprocessing as preprocessing
+import re
 import torch
 
 
 def process_documents(message):
     docs_list = list()
+    provided_docs = dict()
     # If URL(s), process each url and add them to the doc list
     if message["text"]:
         url_list = message["text"].split(",")
         docs = [WebBaseLoader(url).load() for url in url_list]
         docs_list += [item for sublist in docs for item in sublist]
+        provided_docs["websites"] = url_list
 
     # If file(s), process each file and add it to the doc list
     if message["files"]:
+        provided_files = list()
         for file in message["files"]:
-            docs = [TextLoader(file).load()]
-            docs_list += [item for sublist in docs for item in sublist]
-    print(f"Documents provided: {docs_list}")
+            filename = file.split("/")[-1]
+            if re.fullmatch(r".*\.(md|txt)$", filename):              
+                docs = [TextLoader(file).load()]
+                docs_list += [item for sublist in docs for item in sublist]
+                provided_files.append(filename)
+        provided_docs["files"] = [provided_files]
 
     # Chunk and embed docs_list
     doc_splits = preprocessing.chunk_documents(docs_list)
@@ -38,6 +45,8 @@ def process_documents(message):
     except torch.OutOfMemoryError:
         print("\nGPU out of memory.\n\nRestart gradio_app.py")
 
+    # Print the documents that were provided        
+    print(f"Documents provided: {provided_docs}")
 
 def generate_response(message, history):
     try:
