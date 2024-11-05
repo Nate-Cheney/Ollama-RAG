@@ -13,10 +13,12 @@ This is a personal project which allows me to provide documents to an LLM runnin
 # Use ollama-rag (gradio)
 ### Start
 - Start the Llama3.1 model
+  
   ```
   Ollama run Llama3.1
   ```
 - Run `gradio_app.py` from the terminal
+  
   ```
   Python ./gradio_app.py
   ```
