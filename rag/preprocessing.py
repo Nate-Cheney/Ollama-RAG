@@ -22,6 +22,6 @@ def embed_doc_splits(doc_splits):
         documents=doc_splits,
         embedding=embeddings,
     )
-    retriever = vectorstore.as_retriever(k=5)
+    retriever = vectorstore.as_retriever(k=4)
 
     return retriever

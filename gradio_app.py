@@ -67,6 +67,17 @@ def generate_response(message, history):
         Answer:
         """,
         input_variables=["question", "documents"],
+        #template="""
+        # You are an assistant designed to provide detailed, clear answers.
+        # - Use the documents or information provided to form your response.
+        # - Aim for clarity and explain the answer in detail, breaking down concepts where necessary.
+        # - If the information is unclear or missing, mention that the answer is unavailable.
+        # Provide a detailed response, but do not hallucinate.
+        # Question: {question}
+        # Documents: {documents}
+        # Answer:
+        # """,
+        # input_variables=["question", "documents"],
     )
 
     llm = ChatOllama(
