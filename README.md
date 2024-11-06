@@ -8,8 +8,14 @@ Ollama-RAG is a personal project and I can't guaruntee that this will work perfe
 - Install the required Python libraries:
 
   ```
+  # Install packages on Linux
   pip install -r requirements.txt
-  # If on Windows use the win_requirements.txt instead
+  ```
+
+  ```
+  # Install packages on Windows
+  pip install -r win_requirements.txt
+
   ```
 - Clone the Ollama-RAG repository
 
