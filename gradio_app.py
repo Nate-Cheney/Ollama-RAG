@@ -48,6 +48,51 @@ def process_documents(message):
     # Print the documents that were provided        
     print(f"Documents provided: {provided_docs}")
 
+
+# Define prompt templates
+prompt_templates = {
+    "Default Template": """You are an assistant for question-answering tasks.
+    - Use only the following documents to answer the question.
+    - If you don't know the answer, simply say: "I don't know."
+    - Use UP TO five sentences maximum and keep the answer concise.
+Question: {question}
+Documents: {documents}
+Answer:""",
+
+    "Concise Template": """You are an assistant designed to extract factual information from documents.
+    - Given the following context: {documents}, provide a concise, accurate answer to the question: {question}
+Answer:""",
+
+    "Detailed Template": """You are an assistant designed to provide clear and detailed answers.
+    - Use the documents provided to form your response.
+    - Aim for clarity and explain the answer in detail, breaking down concepts where necessary.
+    - If the information is unclear or you are missing information, say that.
+    - Provide a detailed response, but do not hallucinate.
+Question: {question}
+Documents: {documents}
+Answer:""",
+
+    "Step-by-step Template": """You are an assistant designed to break down complex tasks or processes.
+    - Based on the provided documents, explain the steps required to {question}. 
+    - Be sure to include all relevant details from the context provided.
+Documents: {documents}
+Answer:""",
+
+    "Summarization Template": """ You are an assistant designed to summarize key points from documents.
+    - Separate the main ideas and conclusions from the following documents into sections.
+    - Summarize each section under it's own header.
+    - Format your summarization with markdown file (.md) formatting.
+Documents: {documents}
+Answer:""",
+}
+
+def update_template(selected_template):
+    global prompt_template
+    prompt_template = prompt_templates[selected_template]
+    # Return the content of the selected template
+    return prompt_template
+
+
 def generate_response(message, history):
     try:
         if not retriever:
@@ -57,29 +102,10 @@ def generate_response(message, history):
         return response
     
     prompt = PromptTemplate(
-        template="""
-        You are an assistant for question-answering tasks.
-        Use the following documents to answer the question.
-        If you don't know the answer, just say that you don't know.
-        Use UP TO four sentences maximum and keep the answer concise:
-        Question: {question}
-        Documents: {documents}
-        Answer:
-        """,
+        template=prompt_template,
         input_variables=["question", "documents"],
-        #template="""
-        # You are an assistant designed to provide detailed, clear answers.
-        # - Use the documents or information provided to form your response.
-        # - Aim for clarity and explain the answer in detail, breaking down concepts where necessary.
-        # - If the information is unclear or missing, mention that the answer is unavailable.
-        # Provide a detailed response, but do not hallucinate.
-        # Question: {question}
-        # Documents: {documents}
-        # Answer:
-        # """,
-        # input_variables=["question", "documents"],
     )
-
+    
     llm = ChatOllama(
         model="llama3.1",
         temperature=0,
@@ -95,7 +121,7 @@ def generate_response(message, history):
     except ValueError as e:
         response = gr.ChatMessage(
             role="assistant",
-            content="I don't have enough information to answer that question. Provide more documents."
+            content="Input documents before you can ask questions."
             )
         return response
     
@@ -106,7 +132,7 @@ def generate_response(message, history):
 
 
 with gr.Blocks() as app:
-    with gr.Row():
+    with gr.Column():
         # Docs
         doc_input = gr.MultimodalTextbox(
             interactive=True,
@@ -121,14 +147,43 @@ with gr.Blocks() as app:
             [doc_input]
         )
 
+        # Prompt Templates
+        default_template = list(prompt_templates.keys())[0]  # Set default to first template
+        template_dropdown = gr.Dropdown(
+            choices=list(prompt_templates.keys()),
+            label="Select a Prompt Template",
+            interactive=True,
+            value=default_template  # Set default value
+        )
+        template_display = gr.Textbox(
+            label="Selected Template:",
+            interactive=False,
+            lines=5
+        )
+
+        # Update the displayed template when a new one is selected
+        template_dropdown.change(
+            fn=update_template,
+            inputs=[template_dropdown],
+            outputs=[template_display]
+        )
+
+    
     # Chatbot
-    chatbot = gr.Chatbot(height=800, type="messages")  # Increase the height of the chatbot
+    chatbot = gr.Chatbot(height=650, type="messages")  # Increase the height of the chatbot
     chat_interface = gr.ChatInterface(
         generate_response,
         chatbot=chatbot,
         type="messages",
         show_progress="full",
         )
+
+    # Set initial value for template_display
+    app.load(
+        fn=update_template,
+        inputs=[template_dropdown],
+        outputs=[template_display]
+    )
 
 
 if __name__ == "__main__":
