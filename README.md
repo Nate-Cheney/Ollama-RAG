@@ -9,6 +9,7 @@ Ollama-RAG is a personal project and I can't guaruntee that this will work perfe
 
   ```
   pip install -r requirements.txt
+  # If on Windows use the win_requirements.txt instead
   ```
 - Clone the Ollama-RAG repository
 
