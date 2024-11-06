@@ -22,7 +22,7 @@ Ollama-RAG is a personal project and I can't guaruntee that this will work perfe
 - Run `gradio_app.py` from the terminal
   
   ```
-  Python ./gradio_app.py
+  python3 ./gradio_app.py
   ```
 - Go to [http://127.0.0.1:7860](http://127.0.0.1:7860) with a web browser
 
