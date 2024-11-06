@@ -27,7 +27,9 @@ This is a personal project which allows me to provide documents to an LLM runnin
 ### Usage
 - Input documents or paste URLs separated by commas into the input box.
 
-- Allow for the provided docs to be processed.
+- Select one of the prompt templates.
+
+- Make sure that the provided docs have already been processed.
 
 - Ask away.
 
