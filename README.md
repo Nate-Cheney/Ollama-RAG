@@ -1,9 +1,11 @@
 # About
-This is a personal project which allows me to provide documents to an LLM running with Ollama.
+Ollama-RAG allows for retrieval-augmented generation using Ollama3.1 and user provided documents (currently in the form of URLs, .MDs and .TXTs).
+
+Ollama-RAG is a personal project and I can't guaruntee that this will work perfectly, but feel free to reach out with any questions, comments, or concerns.
 
 # Setup
 - Install Ollama and a Llama3.1 model
-- Install the following Python libraries:
+- Install the required Python libraries:
 
   ```
   pip install -r requirements.txt
@@ -27,7 +29,20 @@ This is a personal project which allows me to provide documents to an LLM runnin
 ### Usage
 - Input documents or paste URLs separated by commas into the input box.
 
-- Allow for the provided docs to be processed.
+- Select one of the prompt templates.
+
+- Make sure that the provided docs have already been processed.
 
 - Ask away.
 
+# Customization
+Ollama-RAG should work with all of Ollama modles. **Please know that I have only tested it with llama3.1**.
+
+To use a different model, change the model name in `gradio_app.py` line 109 to the desired model.
+
+```
+108    llm = ChatOllama(
+109        model="llama3.1",  # replace the model here
+110        temperature=0,
+111    )
+```

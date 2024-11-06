@@ -10,7 +10,6 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-import rag.documents as documents
 import rag.preprocessing as preprocessing
 import re
 import torch
