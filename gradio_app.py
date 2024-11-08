@@ -7,9 +7,11 @@ environ['CUDA_VISIBLE_DEVICES'] = "0"
 import gradio as gr
 from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import WebBaseLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+import platform
 import rag.preprocessing as preprocessing
 import re
 import torch
@@ -29,11 +31,27 @@ def process_documents(message):
     if message["files"]:
         provided_files = list()
         for file in message["files"]:
-            filename = file.split("/")[-1]
-            if re.fullmatch(r".*\.(md|txt)$", filename):              
+            if platform.system() == "Linux":
+                filename = file.split("/")[-1]
+            elif platform.system() == "Windows":
+                filename = file.split("\\")[-1]
+            # JSON
+            if re.fullmatch(r".*\.(json)$", filename):              
+                print("JSON support is in the works")
+                continue                
+            # PDF
+            elif re.fullmatch(r".*\.(pdf)$", filename):         
+                docs = [PyPDFLoader(file).load()]
+                docs_list += [item for sublist in docs for item in sublist]
+                provided_files.append(filename)
+            # Text (.md and .txt)
+            elif re.fullmatch(r".*\.(md|txt)$", filename):              
                 docs = [TextLoader(file).load()]
                 docs_list += [item for sublist in docs for item in sublist]
                 provided_files.append(filename)
+            else:
+                print(f"{filename}'s file format is not supported yet.")
+
         provided_docs["files"] = [provided_files]
 
     # Chunk and embed docs_list
