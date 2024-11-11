@@ -23,9 +23,27 @@ def process_documents(message):
     # If URL(s), process each url and add them to the doc list
     if message["text"]:
         url_list = message["text"].split(",")
-        docs = [WebBaseLoader(url).load() for url in url_list]
-        docs_list += [item for sublist in docs for item in sublist]
-        provided_docs["websites"] = url_list
+        provided_urls = list()
+        provided_videos = list()
+        for url in url_list:
+            url = url.strip()
+            if re.match("^(https://www.youtube.com/playlist)", url):
+                print(f"\nYouTube playlist links are not supported. Paste the individual video links from the following url instead.\n{url}\n")
+                continue
+            elif re.match("^(https://www.youtube.com/watch)", url) or re.match("^https://youtu.be/", url):
+                # YT Transcript Code
+                
+                provided_videos.append(url)
+                continue
+            else:
+                docs = [WebBaseLoader(url).load()]
+                docs_list += [item for sublist in docs for item in sublist]
+                provided_urls.append(url)
+
+        if provided_urls:
+            provided_docs["websites"] = provided_urls
+        if provided_videos:
+            provided_docs["youtube videos"] = provided_videos
 
     # If file(s), process each file and add it to the doc list
     if message["files"]:
