@@ -5,19 +5,14 @@ Ollama-RAG is a personal project and I can't guaruntee that this will work perfe
 
 # Setup
 - Install Ollama and a Llama3.1 model
+
+- Clone the Ollama-RAG repository
+
 - Install the required Python libraries:
 
   ```
-  # Install packages on Linux
   pip install -r requirements.txt
   ```
-
-  ```
-  # Install packages on Windows
-  pip install -r win_requirements.txt
-
-  ```
-- Clone the Ollama-RAG repository
 
 # Use ollama-rag (gradio)
 ### Start
