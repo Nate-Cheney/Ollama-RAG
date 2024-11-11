@@ -61,20 +61,26 @@ def process_documents(message):
                 filename = file.split("/")[-1]
             elif platform.system() == "Windows":
                 filename = file.split("\\")[-1]
+
             # JSON
             if re.fullmatch(r".*\.(json)$", filename):              
                 print("JSON support is in the works")
-                continue                
+                continue        
+
             # PDF
             elif re.fullmatch(r".*\.(pdf)$", filename):         
                 docs = [PyPDFLoader(file).load()]
                 docs_list += [item for sublist in docs for item in sublist]
                 provided_files.append(filename)
+                continue
+
             # Text (.md and .txt)
             elif re.fullmatch(r".*\.(md|txt)$", filename):              
                 docs = [TextLoader(file).load()]
                 docs_list += [item for sublist in docs for item in sublist]
                 provided_files.append(filename)
+                continue
+            
             else:
                 print(f"{filename}'s file format is not supported yet.")
 
