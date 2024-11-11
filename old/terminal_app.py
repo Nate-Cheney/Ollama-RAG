@@ -89,7 +89,7 @@ class RAGApplication:
 class RAGInterface:
     def __init__(self):
         import time
-        import preprocessing as preprocessing
+        import utils.preprocessing as preprocessing
         import documents as documents
 
 

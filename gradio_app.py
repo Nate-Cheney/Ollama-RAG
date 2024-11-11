@@ -13,10 +13,10 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import os
 import platform
-import preprocessing as preprocessing
+import utils.preprocessing as preprocessing
 import re
 import torch
-import youtube as yt
+import utils.youtube as yt
 
 
 def process_documents(message):
