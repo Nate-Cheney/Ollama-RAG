@@ -12,7 +12,7 @@ from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import platform
-import rag.preprocessing as preprocessing
+import preprocessing as preprocessing
 import re
 import torch
 

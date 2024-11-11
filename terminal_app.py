@@ -89,8 +89,8 @@ class RAGApplication:
 class RAGInterface:
     def __init__(self):
         import time
-        import rag.preprocessing as preprocessing
-        import rag.documents as documents
+        import preprocessing as preprocessing
+        import documents as documents
 
 
         print(ollama_rag_ascii_art)
