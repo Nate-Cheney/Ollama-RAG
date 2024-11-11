@@ -11,11 +11,13 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+import os
 import platform
 import preprocessing as preprocessing
 import re
 import torch
 import youtube as yt
+
 
 def process_documents(message):
     docs_list = list()
@@ -25,13 +27,15 @@ def process_documents(message):
         url_list = message["text"].split(",")
         provided_urls = list()
         provided_videos = list()
+        transcript_list = list()
         for url in url_list:
             url = url.strip()
             if re.match("^(https://www.youtube.com/playlist)", url):
                 print(f"\nYouTube playlist links are not supported. Paste the individual video links from the following url instead.\n{url}\n")
                 continue
             elif re.match("^(https://www.youtube.com/watch)", url) or re.match("^https://youtu.be/", url):
-                yt.transcript_main(url=url)
+                video_title = yt.transcript_main(url=url)
+                transcript_list.append(video_title)
                 provided_videos.append(url)
                 continue
             else:
@@ -41,8 +45,13 @@ def process_documents(message):
 
         if provided_urls:
             provided_docs["websites"] = provided_urls
+
         if provided_videos:
             provided_docs["youtube videos"] = provided_videos
+            dir_path = r"transcripts"
+            for file in os.listdir(dir_path):
+                docs = [TextLoader(os.path.join(dir_path, file)).load()]
+                docs_list += [item for sublist in docs for item in sublist]
 
     # If file(s), process each file and add it to the doc list
     if message["files"]:
@@ -81,7 +90,6 @@ def process_documents(message):
 
     # Print the documents that were provided        
     print(f"Documents provided: {provided_docs}")
-
 
 # Define prompt templates
 prompt_templates = {

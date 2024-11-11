@@ -20,16 +20,24 @@ def extract_youtube_transcript(url):
     except youtube_transcript_api._errors.NoTranscriptFound:
         return YouTubeTranscriptApi.get_transcript(video_id)
 
+
 def get_youtube_title(url: str) -> str:
-    from yt_dlp import YoutubeDL
+    import requests
+    import re
     try:
-        ydl_opts = {'quiet': True}
-        with YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(url, download=False)
-            return info_dict.get('title', None)
+        response = requests.get(url)
+        if response.status_code == 200:
+            # Search for the title in the page HTML
+            match = re.search(r'<title>(.*?)</title>', response.text)
+            if match:
+                # Clean up the title (YouTube titles often have "- YouTube" at the end)
+                title = match.group(1).replace(" - YouTube", "").strip()
+                return title
+        return None
     except Exception as e:
         print("An error occurred:", e)
         return None
+
 
 def process_transcript(transcript_list):
     transcript = str()
@@ -37,6 +45,7 @@ def process_transcript(transcript_list):
         transcript += (dictionary["text"] + "\n")
 
     return transcript
+
 
 def transcript_main(url: str):
     import os
@@ -46,7 +55,10 @@ def transcript_main(url: str):
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
     os.chdir(dir_path)
-    with open(f"{get_youtube_title(url)}.txt", "w") as file:
+    video_title = get_youtube_title(url).replace(" ", "_")
+    with open(f"{video_title}.txt", "w") as file:
         file.write(process_transcript(extract_youtube_transcript(url)))
-    
+
     os.chdir(original_wd)
+
+    return video_title
