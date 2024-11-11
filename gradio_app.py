@@ -15,7 +15,7 @@ import platform
 import preprocessing as preprocessing
 import re
 import torch
-
+import youtube as yt
 
 def process_documents(message):
     docs_list = list()
@@ -31,8 +31,7 @@ def process_documents(message):
                 print(f"\nYouTube playlist links are not supported. Paste the individual video links from the following url instead.\n{url}\n")
                 continue
             elif re.match("^(https://www.youtube.com/watch)", url) or re.match("^https://youtu.be/", url):
-                # YT Transcript Code
-                
+                yt.transcript_main(url=url)
                 provided_videos.append(url)
                 continue
             else:
