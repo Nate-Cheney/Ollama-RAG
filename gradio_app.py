@@ -36,7 +36,7 @@ def process_documents(message):
             elif re.match("^(https://www.youtube.com/watch)", url) or re.match("^https://youtu.be/", url):
                 video_title = yt.transcript_main(url=url)
                 transcript_list.append(video_title)
-                provided_videos.append(url)
+                provided_videos.append(video_title)
                 continue
             else:
                 docs = [WebBaseLoader(url).load()]
@@ -52,6 +52,7 @@ def process_documents(message):
             for file in os.listdir(dir_path):
                 docs = [TextLoader(os.path.join(dir_path, file)).load()]
                 docs_list += [item for sublist in docs for item in sublist]
+                os.remove(os.path.join(dir_path, file))
 
     # If file(s), process each file and add it to the doc list
     if message["files"]:

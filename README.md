@@ -33,8 +33,13 @@ Ollama-RAG is a personal project and I can't guaruntee that this will work perfe
   ```
 - Go to [http://127.0.0.1:7860](http://127.0.0.1:7860) with a web browser
 
-### Usage
-- Input documents or paste URLs separated by commas into the input box.
+### Use
+- Input documents. Documents can be:
+  - JSON, PDF, TXT, and MD files.
+  - Individual YouTube video links.
+  - URLs to websites.
+> Note that video links and urls must be separated by a comma.
+
 
 - Select one of the prompt templates.
 

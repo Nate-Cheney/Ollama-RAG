@@ -55,7 +55,7 @@ def transcript_main(url: str):
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
     os.chdir(dir_path)
-    video_title = get_youtube_title(url).replace(" ", "_")
+    video_title = get_youtube_title(url)#.replace(" ", "_")
     with open(f"{video_title}.txt", "w") as file:
         file.write(process_transcript(extract_youtube_transcript(url)))
 
