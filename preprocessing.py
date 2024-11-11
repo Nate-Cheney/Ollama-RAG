@@ -7,10 +7,11 @@ def chunk_documents(docs_list: list):
     )
     # Split the documents into chunks
     doc_splits = text_splitter.split_documents(docs_list)
+
     return doc_splits
 
 
-def embed_doc_splits(doc_splits):
+def embed_doc_splits(doc_splits: list):
     from langchain_community.vectorstores import SKLearnVectorStore
     from langchain_huggingface import HuggingFaceEmbeddings
 
@@ -22,6 +23,6 @@ def embed_doc_splits(doc_splits):
         documents=doc_splits,
         embedding=embeddings,
     )
-    retriever = vectorstore.as_retriever(k=4)
+    retriever = vectorstore.as_retriever(k=3)
 
     return retriever

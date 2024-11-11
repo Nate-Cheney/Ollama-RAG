@@ -71,36 +71,26 @@ prompt_templates = {
     "Default Template": """You are an assistant for question-answering tasks.
     - Use only the following documents to answer the question.
     - If you don't know the answer, simply say: "I don't know."
-    - Use UP TO five sentences maximum and keep the answer concise.
-Question: {question}
-Documents: {documents}
-Answer:""",
+    - Use UP TO five sentences maximum and keep the answer concise.""",
 
     "Concise Template": """You are an assistant designed to extract factual information from documents.
-    - Given the following context: {documents}, provide a concise, accurate answer to the question: {question}
+    - Given the following context, provide a concise, accurate answer to the question.
 Answer:""",
 
     "Detailed Template": """You are an assistant designed to provide clear and detailed answers.
     - Use the documents provided to form your response.
     - Aim for clarity and explain the answer in detail, breaking down concepts where necessary.
     - If the information is unclear or you are missing information, say that.
-    - Provide a detailed response, but do not hallucinate.
-Question: {question}
-Documents: {documents}
-Answer:""",
+    - Provide a detailed response, but do not hallucinate.""",
 
     "Step-by-step Template": """You are an assistant designed to break down complex tasks or processes.
-    - Based on the provided documents, explain the steps required to {question}. 
-    - Be sure to include all relevant details from the context provided.
-Documents: {documents}
-Answer:""",
+    - Based on the provided documents, explain the steps required to (insert question). 
+    - Be sure to include all relevant details from the context provided.""",
 
-    "Summarization Template": """ You are an assistant designed to summarize key points from documents.
-    - Separate the main ideas and conclusions from the following documents into sections.
-    - Summarize each section under it's own header.
-    - Format your summarization with markdown file (.md) formatting.
-Documents: {documents}
-Answer:""",
+    # "Summarization Template": """ You are an assistant designed to summarize key points from documents.
+    # - Separate the main ideas and conclusions from the following documents into sections.
+    # - Summarize each section under it's own header.
+    # - Format your summarization with markdown file (.md) formatting.""",
 }
 
 def update_template(selected_template):
@@ -118,29 +108,36 @@ def generate_response(message, history):
         response = gr.ChatMessage(role="assistant", content="Provide documents above before I can answer that")
         return response
     
-    prompt = PromptTemplate(
-        template=prompt_template,
-        input_variables=["question", "documents"],
-    )
-    
-    llm = ChatOllama(
-        model="llama3.1",
-        temperature=0,
-    )
+    while True:
+        try:
+            prompt_template += """
+    - List the source(s) of any documents used at the end of your response.
+    - If the source is a file, ignore the path to the file include only the filename.
+    Question: {question}
+    Documents: {documents}
+    Answer:           
+    """
+            prompt = PromptTemplate(
+                template=prompt_template,
+                input_variables=["question", "documents"],
+            )
+            break
+        except NameError:
+            prompt_template = prompt_templates["Default Template"]
+
+        llm = ChatOllama(
+            model="llama3.1",
+            temperature=0.5,
+        )
 
     rag_chain = prompt | llm | StrOutputParser()
 
-    try:
-        # Retrieve relevant documents
-        documents = retriever.invoke(message)
-        # Extract content from retrieved documents
-        doc_texts = "\\n".join([doc.page_content for doc in documents])
-    except ValueError as e:
-        response = gr.ChatMessage(
-            role="assistant",
-            content="Input documents before you can ask questions."
-            )
-        return response
+    # Retrieve relevant documents
+    documents = retriever.invoke(message)
+    # Format the retrieved documents with source metadata
+    doc_texts = "\n".join(
+        [f"{doc.page_content}\n(Source: {doc.metadata.get('source', 'Unknown')})" for doc in documents]
+    )   
     
     # Get the answer from the LLM
     response = rag_chain.invoke({"question": message, "documents": doc_texts})
