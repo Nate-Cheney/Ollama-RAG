@@ -31,7 +31,11 @@ def process_documents(message):
         for url in url_list:
             url = url.strip()
             if re.match("^(https://www.youtube.com/playlist)", url):
-                print(f"\nYouTube playlist links are not supported. Paste the individual video links from the following url instead.\n{url}\n")
+                playlist = yt.get_playlist_videos(url)
+                for video in playlist:
+                    video_title = yt.transcript_main(url=video)
+                    transcript_list.append(video_title)
+                    provided_videos.append(video_title)
                 continue
             elif re.match("^(https://www.youtube.com/watch)", url) or re.match("^https://youtu.be/", url):
                 video_title = yt.transcript_main(url=url)

@@ -21,6 +21,23 @@ def extract_youtube_transcript(url):
         return YouTubeTranscriptApi.get_transcript(video_id)
 
 
+def get_playlist_videos(url: str):
+    import requests
+    import re
+    video_list = list()
+    response = requests.get(url)    
+    if response.status_code==200:
+        match = set(re.findall(r"watch\?v=([^\"&]+)", response.text))
+        for video_id in match:
+            if "index=" in video_id:
+                video_list.append(f"https://www.youtube.com/watch?v={video_id}")
+
+        return sorted(video_list, key=lambda x: int(x.split("index=")[1].split("\\")[0]))
+    
+    else:
+        return None
+
+
 def get_youtube_title(url: str) -> str:
     import requests
     import re
