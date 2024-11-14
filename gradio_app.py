@@ -220,7 +220,7 @@ with gr.Blocks() as app:
 
     
     # Chatbot
-    chatbot = gr.Chatbot(height=650, type="messages")  # Increase the height of the chatbot
+    chatbot = gr.Chatbot(height=700, type="messages")  # Increase the height of the chatbot
     chat_interface = gr.ChatInterface(
         generate_response,
         chatbot=chatbot,
