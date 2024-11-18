@@ -59,7 +59,7 @@ def process_documents(message):
                 docs = [TextLoader(os.path.join(dir_path, file)).load()]
                 docs_list += [item for sublist in docs for item in sublist]
                 os.remove(os.path.join(dir_path, file))
-
+            
     # If file(s), process each file and add it to the doc list
     if message["files"]:
         provided_files = list()
@@ -93,13 +93,15 @@ def process_documents(message):
 
         provided_docs["files"] = [provided_files]
 
+    print(type(docs_list))
+
     # Chunk and embed docs_list
     doc_splits = preprocessing.chunk_documents(docs_list)
     global retriever
     try:
         retriever = preprocessing.embed_doc_splits(doc_splits)
 
-        grade_retrieved_documents(question=message)
+        #grade_retrieved_documents(question=message)
 
     except torch.OutOfMemoryError:
         print("\nGPU out of memory.\n\nRestart gradio_app.py")

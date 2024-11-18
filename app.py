@@ -4,7 +4,8 @@ from langchain_community.vectorstores import SKLearnVectorStore
 from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
-
+from langchain_core.output_parsers import StrOutputParser
+from langchain_community.document_loaders import TextLoader
 
 class OllamaRAG:
     def __init__(self, docs_list=list()):
@@ -22,7 +23,7 @@ class OllamaRAG:
         embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 
         # Create embeddings for documents and store them in a vector store
-        vectorstore = SKLearnVectorStore.from_documents(
+        self.vectorstore = SKLearnVectorStore.from_documents(
             documents=doc_splits,
             embedding=embeddings,
         )
@@ -53,15 +54,47 @@ class OllamaRAG:
 
         '''Audit Documents'''
         grade = retrieval_grader.invoke({"question": question, "documents": self.documents})
+        
         print(grade)
-
         return grade
 
 
-    def generate_response(self):
+    def generate_response(self, question):
         '''Generate response'''
-        pass
+        llm = ChatOllama(model="llama3.1", temperature=0)
+
+        prompt = PromptTemplate(
+            template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are an assistant for question-answering tasks.
+            - Use only the following documents to answer the question.
+            - If you don't know the answer, simply say: "I don't know."\n
+            - Keep your answers as clear and consise as possible.\n
+            - List the source(s) of any documents used at the end of your response.
+            - If the source is a file, ignore the path to the file include only the filename.\n
+            <|eot_id|><|start_header_id|>user<|end_header_id|>
+            Documents: \n\n {documents} \n\n
+            Question: \n\n {question} \n\n
+            Answer: <|eot_id|><start_header_id|>assistant<|end_header_id|>
+            """,
+            input_variables=["question", "documents"]
+        )
+
+        rag_chain = prompt | llm | StrOutputParser()
+    
+        answer = rag_chain.invoke({"question": question, "documents": self.documents})
+
+        print(answer)
+        return answer
 
 
 if __name__ == "__main__":
-    pass
+    # Init
+    document = TextLoader("1. Procedural Introduction to Cybersecurity Litigation.txt").load()
+    q = "When was the mona lisa painted?"
+    rag_agent = OllamaRAG(docs_list=document)
+
+    # Grade document retrieval
+    grade = rag_agent.grade_retrieved_documents(question=q)
+    
+    # Generate response
+    if grade == {'score': 'yes'}:
+        rag_agent.generate_response(question=q)
