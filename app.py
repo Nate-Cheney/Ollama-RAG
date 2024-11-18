@@ -88,7 +88,7 @@ class OllamaRAG:
 
 if __name__ == "__main__":
     # Init
-    document = TextLoader("1. Procedural Introduction to Cybersecurity Litigation.txt").load()
+    document = TextLoader(r"test_docs/1. Procedural Introduction to Cybersecurity Litigation.txt").load()
     q = "When was the mona lisa painted?"
     rag_agent = OllamaRAG(docs_list=document)
 
