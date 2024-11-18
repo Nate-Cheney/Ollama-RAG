@@ -106,7 +106,7 @@ class RAGInterface:
             elif item == "2":
                 docs_list += documents.load_directory()
             elif item == "3":
-                docs_list += documents.load_website()
+                docs_list += documents.load_websites()
 
         # Chunk and embed documents
         doc_splits = preprocessing.chunk_documents(docs_list)

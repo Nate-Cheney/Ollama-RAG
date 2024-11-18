@@ -21,6 +21,6 @@ def grade_retrieved_documents(question: str):
     )
 
     retrieval_grader = prompt | llm | JsonOutputParser()
-    documents = gradio_app.retriever.invoke(question)
+    documents = retriever.invoke(question)
 
     print(retrieval_grader.invoke({"question": question, "documents": documents}))
