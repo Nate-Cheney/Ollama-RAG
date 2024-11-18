@@ -4,6 +4,7 @@ environ['CUDA_DEVICE_ORDER'] = "PCI_BUS_ID"
 environ['CUDA_VISIBLE_DEVICES'] = "0"
 
 
+from utils.audit import *
 import gradio as gr
 from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import WebBaseLoader
@@ -13,6 +14,7 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import os
 import platform
+import utils.prompt_templates as pt
 import utils.preprocessing as preprocessing
 import re
 import torch
@@ -96,38 +98,19 @@ def process_documents(message):
     global retriever
     try:
         retriever = preprocessing.embed_doc_splits(doc_splits)
+
+        grade_retrieved_documents(question=message)
+
     except torch.OutOfMemoryError:
         print("\nGPU out of memory.\n\nRestart gradio_app.py")
 
     # Print the documents that were provided        
     print(f"Documents provided: {provided_docs}")
 
-# Define prompt templates
-prompt_template_dict = {
-    "Default Template": """You are an assistant for question-answering tasks.
-    - Use only the following documents to answer the question.
-    - If you don't know the answer, simply say: "I don't know."
-    - Use five sentences maximum and keep the answer concise.""",
-
-    "Detailed Template": """You are an assistant designed to provide clear and detailed answers.
-    - Use the documents provided to form your response.
-    - Aim for clarity and explain the answer in detail, breaking down concepts where necessary.
-    - If the information is unclear or you are missing information, say that.
-    - Provide a detailed response, but do not hallucinate.""",
-
-    "Step-by-step Template": """You are an assistant designed to break down complex tasks or processes.
-    - Based on the provided documents, explain the steps required to (insert question). 
-    - Be sure to include all relevant details from the context provided.""",
-
-    # "Summarization Template": """ You are an assistant designed to summarize key points from documents.
-    # - Separate the main ideas and conclusions from the following documents into sections.
-    # - Summarize each section under it's own header.
-    # - Format your summarization with markdown file (.md) formatting.""",
-}
 
 def update_template(selected_template):
     global prompt_template
-    prompt_template = prompt_template_dict[selected_template]
+    prompt_template = pt.prompt_template_dict[selected_template]
 
     return prompt_template
 
@@ -147,8 +130,8 @@ def generate_response(message, history):
                 """
     - List the source(s) of any documents used at the end of your response.
     - If the source is a file, ignore the path to the file include only the filename. <|eot_id|><|start_header_id|>user<|end_header_id|>
+    Documents: \n\n {documents} \n\n
     Question: {question}
-    Documents: {documents}
     Answer: <|eot_id|><start_header_id|>assistant<|end_header_id|>"""
             
             print("\n" + prompt_template)
@@ -158,7 +141,7 @@ def generate_response(message, history):
             )
             break
         except NameError:
-            prompt_template = prompt_template_dict["Default Template"]
+            prompt_template = pt.prompt_template_dict["Default Template"]
 
         llm = ChatOllama(
             model="llama3.1",
@@ -197,9 +180,9 @@ with gr.Blocks() as app:
         )
 
         # Prompt Templates
-        default_template = list(prompt_template_dict.keys())[0]  # Set default to first template
+        default_template = list(pt.prompt_template_dict.keys())[0]  # Set default to first template
         template_dropdown = gr.Dropdown(
-            choices=list(prompt_template_dict.keys()),
+            choices=list(pt.prompt_template_dict.keys()),
             label="Select a Prompt Template",
             interactive=True,
             value=default_template  # Set default value
