@@ -103,15 +103,11 @@ def process_documents(message):
     print(f"Documents provided: {provided_docs}")
 
 # Define prompt templates
-prompt_templates = {
+prompt_template_dict = {
     "Default Template": """You are an assistant for question-answering tasks.
     - Use only the following documents to answer the question.
     - If you don't know the answer, simply say: "I don't know."
-    - Use UP TO five sentences maximum and keep the answer concise.""",
-
-    "Concise Template": """You are an assistant designed to extract factual information from documents.
-    - Given the following context, provide a concise, accurate answer to the question.
-Answer:""",
+    - Use five sentences maximum and keep the answer concise.""",
 
     "Detailed Template": """You are an assistant designed to provide clear and detailed answers.
     - Use the documents provided to form your response.
@@ -131,8 +127,8 @@ Answer:""",
 
 def update_template(selected_template):
     global prompt_template
-    prompt_template = prompt_templates[selected_template]
-    # Return the content of the selected template
+    prompt_template = prompt_template_dict[selected_template]
+
     return prompt_template
 
 
@@ -146,24 +142,27 @@ def generate_response(message, history):
     
     while True:
         try:
-            prompt_template += """
+            prompt_template = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>""" +\
+                prompt_template +\
+                """
     - List the source(s) of any documents used at the end of your response.
-    - If the source is a file, ignore the path to the file include only the filename.
+    - If the source is a file, ignore the path to the file include only the filename. <|eot_id|><|start_header_id|>user<|end_header_id|>
     Question: {question}
     Documents: {documents}
-    Answer:           
-    """
+    Answer: <|eot_id|><start_header_id|>assistant<|end_header_id|>"""
+            
+            print("\n" + prompt_template)
             prompt = PromptTemplate(
                 template=prompt_template,
                 input_variables=["question", "documents"],
             )
             break
         except NameError:
-            prompt_template = prompt_templates["Default Template"]
+            prompt_template = prompt_template_dict["Default Template"]
 
         llm = ChatOllama(
             model="llama3.1",
-            temperature=0.5,
+            temperature=0.1,
         )
 
     rag_chain = prompt | llm | StrOutputParser()
@@ -198,9 +197,9 @@ with gr.Blocks() as app:
         )
 
         # Prompt Templates
-        default_template = list(prompt_templates.keys())[0]  # Set default to first template
+        default_template = list(prompt_template_dict.keys())[0]  # Set default to first template
         template_dropdown = gr.Dropdown(
-            choices=list(prompt_templates.keys()),
+            choices=list(prompt_template_dict.keys()),
             label="Select a Prompt Template",
             interactive=True,
             value=default_template  # Set default value
