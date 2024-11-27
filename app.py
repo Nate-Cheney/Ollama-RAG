@@ -6,11 +6,50 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.document_loaders import TextLoader
+import openparse
+
+
+class DocumentProcessor:
+    '''The DocumentProcessor class holds the logic for converting media to a markdown formatted document.'''
+    def __init__(self):
+        self.docs_list = list()
+
+    def pdf_processor(self, path: str):
+        # parser = openparse.DocumentParser()
+        # parsed_basic_doc = parser.parse(path)
+
+        # for node in parsed_basic_doc.nodes:
+        #     print(node.model_dump(warnings=False)["text"])
+    
+        parser = openparse.DocumentParser(
+                table_args={
+                    "parsing_algorithm": "unitable",
+                    "min_table_confidence": 0.8,
+                },
+        )
+        parsed_basic_doc = parser.parse(path)
+
+        for node in parsed_basic_doc.nodes:
+            print(node.model_dump(warnings=False)["text"])
+    
+
+
+    def text_processor(self, path: str):
+        pass
+
+    def web_processor(self, url: str):
+        pass
+
+    def youtube_processor(self, url: str):
+        pass
+
+    def add_documents(self):
+        '''This function will be called in main and will handle the logic of what to do with provided docs'''
+        pass
+
 
 class OllamaRAG:
-    def __init__(self, docs_list=list()):
-        '''Get Documents'''
-
+    def __init__(self, docs_list: list):
         '''Chunk Documents'''
         # Initialize a text splitter with specified chunk size and overlap
         text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
@@ -87,14 +126,17 @@ class OllamaRAG:
 
 
 if __name__ == "__main__":
-    # Init
-    document = TextLoader(r"test_docs/1. Procedural Introduction to Cybersecurity Litigation.txt").load()
-    q = "When was the mona lisa painted?"
-    rag_agent = OllamaRAG(docs_list=document)
+    doc_processor = DocumentProcessor()
+    doc_processor.pdf_processor(r"C:\Users\nwche\Documents\School\Text Books\Applied Discrete Stuctrues.pdf")
 
-    # Grade document retrieval
-    grade = rag_agent.grade_retrieved_documents(question=q)
+    # # Init
+    # document = TextLoader(r"test_docs/1. Procedural Introduction to Cybersecurity Litigation.txt").load()
+    # q = "When was the mona lisa painted?"
+    # rag_agent = OllamaRAG(docs_list=document)
+
+    # # Grade document retrieval
+    # grade = rag_agent.grade_retrieved_documents(question=q)
     
-    # Generate response
-    if grade == {'score': 'yes'}:
-        rag_agent.generate_response(question=q)
+    # # Generate response
+    # if grade == {'score': 'yes'}:
+    #     rag_agent.generate_response(question=q)
