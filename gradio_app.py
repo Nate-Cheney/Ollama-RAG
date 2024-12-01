@@ -93,8 +93,6 @@ def process_documents(message):
 
         provided_docs["files"] = [provided_files]
 
-    print(type(docs_list))
-
     # Chunk and embed docs_list
     doc_splits = preprocessing.chunk_documents(docs_list)
     global retriever
@@ -136,7 +134,6 @@ def generate_response(message, history):
     Question: {question}
     Answer: <|eot_id|><start_header_id|>assistant<|end_header_id|>"""
             
-            print("\n" + prompt_template)
             prompt = PromptTemplate(
                 template=prompt_template,
                 input_variables=["question", "documents"],
