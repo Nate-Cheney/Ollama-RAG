@@ -59,7 +59,7 @@ def get_youtube_title(url: str) -> str:
 def process_transcript(transcript_list):
     transcript = str()
     for dictionary in transcript_list:
-        transcript += (dictionary["text"] + "\n")
+        transcript += (str(dictionary) + "\n\n")
 
     return transcript
 

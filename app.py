@@ -7,6 +7,8 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.document_loaders import TextLoader
 import openparse
+import os
+import utils.youtube as yt
 
 
 class DocumentProcessor:
@@ -15,24 +17,17 @@ class DocumentProcessor:
         self.docs_list = list()
 
     def pdf_processor(self, path: str):
-        # parser = openparse.DocumentParser()
-        # parsed_basic_doc = parser.parse(path)
-
-        # for node in parsed_basic_doc.nodes:
-        #     print(node.model_dump(warnings=False)["text"])
-    
+        '''Note that PDF parsing is not finished. using the unitable parsing algorithm is the best option from OpenParse. I'd like to compare the OpenParse parser to the Ollama one.'''
         parser = openparse.DocumentParser(
                 table_args={
                     "parsing_algorithm": "unitable",
                     "min_table_confidence": 0.8,
                 },
-        )
+        )    
         parsed_basic_doc = parser.parse(path)
 
         for node in parsed_basic_doc.nodes:
-            print(node.model_dump(warnings=False)["text"])
-    
-
+            print(node.model_dump(warnings="none")["text"])
 
     def text_processor(self, path: str):
         pass
@@ -41,7 +36,24 @@ class DocumentProcessor:
         pass
 
     def youtube_processor(self, url: str):
-        pass
+        video_title = yt.transcript_main(url=url)
+
+        llm = ChatOllama(model="llama3.1", temperature=0)
+
+        prompt = PromptTemplate(
+            template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are an assistant that transforms YouTube transcripts from Python dictionaries into markdown. 
+            Use the context from the "text", "start", and "duration" to format the transcript.\n
+            <|eot_id|><|start_header_id|>user<|end_header_id|>
+            Dictionary Transcript: \n\n {transcript} \n\n
+            Markdown Transcript: <|eot_id|><start_header_id|>assistant<|end_header_id|>
+            """,
+            input_variables=["transcript"]
+        )
+
+        rag_chain = prompt | llm | StrOutputParser()
+        for script in os.listdir("transcripts"):
+            answer = rag_chain.invoke({script})
+            print(answer)
 
     def add_documents(self):
         '''This function will be called in main and will handle the logic of what to do with provided docs'''
@@ -127,7 +139,8 @@ class OllamaRAG:
 
 if __name__ == "__main__":
     doc_processor = DocumentProcessor()
-    doc_processor.pdf_processor(r"C:\Users\nwche\Documents\School\Text Books\Applied Discrete Stuctrues.pdf")
+    #doc_processor.pdf_processor(r"C:\Users\nwche\Dev\Python\Ollama-RAG\test_docs\table.pdf")
+    doc_processor.youtube_processor("https://www.youtube.com/watch?v=KaLzkazrGcU&list=PLAVNxShcAmGHcoAJRbV0z-gzixdvEidxy&index=1")
 
     # # Init
     # document = TextLoader(r"test_docs/1. Procedural Introduction to Cybersecurity Litigation.txt").load()
