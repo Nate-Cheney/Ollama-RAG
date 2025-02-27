@@ -1,7 +1,7 @@
 # About
 Ollama-RAG allows for retrieval-augmented generation using llama3.1 and user provided documents (currently in the form of URLs, .MDs and .TXTs).
 
-Ollama-RAG is a personal project and I can't guaruntee that this will work perfectly, but feel free to reach out with any questions, comments, or concerns.
+Ollama-RAG is a personal project and I can't guarantee that this will work perfectly, but feel free to reach out with any questions, comments, or concerns.
 
 # Setup
 - Install Ollama and a Llama3.1 model
